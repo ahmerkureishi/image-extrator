@@ -100,22 +100,24 @@ def fetch_url(url, referer = None, retries = 1, dimension = False):
     if not url.startswith('http://'):
         return nothing
     while True:
-        result = urlfetch.fetch(url=url, deadline=10)
-        content = result.content
-        content_type = result.headers.get('content-type')
+        try:
+            result = urlfetch.fetch(url=url, deadline=10)
+            content = result.content
+            content_type = result.headers.get('content-type')
 
-        if not content_type:
-            return nothing
+            if not content_type:
+                return nothing
 
-        if 'image' in content_type:
-            i = Image(content)
-            return (i.width,i.height)
+            if 'image' in content_type:
+                i = Image(content)
+                return (i.width,i.height)
                 
-        elif dimension:
+            elif dimension:
+                return nothing
+
+            return content_type, content
+        except urlfetch.Error:
             return nothing
-
-        return content_type, content
-
 
 def fetch_size(url, referer = None, retries = 1):
     return fetch_url(url, referer, retries, dimension = True)
