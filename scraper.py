@@ -22,17 +22,15 @@
 
 import logging
 
-import simplejson as json
-
-from urllib2 import Request, HTTPError, URLError, urlopen
+import json
+from google.appengine.api import urlfetch
+# from urllib2 import Request, HTTPError, URLError, urlopen
 from httplib import InvalidURL
 import urlparse, re, urllib, logging, StringIO, logging
 import math
 from google.appengine.api.images import Image
 from BeautifulSoup import BeautifulSoup
 
-
-useragent = "Image Extractor"
 
 chunk_size = 1024
 thumbnail_size = 70, 70
@@ -102,58 +100,23 @@ def fetch_url(url, referer = None, retries = 1, dimension = False):
     if not url.startswith('http://'):
         return nothing
     while True:
-        try:
-            req = Request(url)
-            if useragent:
-                req.add_header('User-Agent', useragent)
-            if referer:
-                req.add_header('Referer', referer)
+        result = urlfetch.fetch(url=url, deadline=10)
+        content = result.content
+        content_type = result.headers.get('content-type')
 
-            open_req = urlopen(req)
+        logging.info(content_type)
+        if not content_type:
+            return nothing
 
-            #if we only need the dimension of the image, we may not
-            #need to download the entire thing
-            # THAT CAN'T BE DONE ON GAE IT SEEMS.
-            # if dimension:
-            #     content = open_req.read(chunk_size)
-            # else:
-            content = open_req.read()
-            content_type = open_req.headers.get('content-type')
-
-            if not content_type:
-                return nothing
-
-            if 'image' in content_type:
-                i = Image(content)
-                return (i.width,i.height)
+        if 'image' in content_type:
+            i = Image(content)
+            return (i.width,i.height)
                 
-                # p = ImageFile.Parser()
-                # new_data = content
-                # while not p.image and new_data:
-                #     p.feed(new_data)
-                #     new_data = open_req.read(chunk_size)
-                #     content += new_data
-                # 
-                # #return the size, or return the data
-                # if dimension and p.image:
-                #     return p.image.size
-                # elif dimension:
-                #     return nothing
-            elif dimension:
-                #expected an image, but didn't get one
-                return nothing
+        elif dimension:
+            return nothing
 
-            return content_type, content
+        return content_type, content
 
-        except (URLError, HTTPError, InvalidURL), e:
-            cur_try += 1
-            if cur_try >= retries:
-                logging.debug('error while fetching: %s referer: %s' % (url, referer))
-                logging.debug(e)
-                return nothing
-        finally:
-            if 'open_req' in locals():
-                open_req.close()
 
 def fetch_size(url, referer = None, retries = 1):
     return fetch_url(url, referer, retries, dimension = True)
@@ -1338,7 +1301,7 @@ class EmbedlyOEmbed(OEmbed):
     )
     
     api_endpoint = 'http://api.embed.ly/1/oembed'
-    api_params = {'format':'json', 'maxwidth':600, 'key' : "embedly_api_key" }
+    api_params = {'format':'json', 'maxwidth':600, 'key' : "" }
  
 class GenericScraper(MediaScraper):
     """a special scrapper not associated with any domains, used to
