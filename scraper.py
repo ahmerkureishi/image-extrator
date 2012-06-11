@@ -1304,7 +1304,7 @@ class EmbedlyOEmbed(OEmbed):
     api_params = {'format':'json', 'maxwidth':600, 'key' : "" }
  
 class GenericScraper(MediaScraper):
-    """a special scrapper not associated with any domains, used to
+    """a special scraper not associated with any domains, used to
        write media objects to links by hand"""
     domains = ['*']
     height = 480
