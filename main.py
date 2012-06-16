@@ -16,6 +16,7 @@
 #
 import webapp2
 import logging
+import urllib
 
 from google.appengine.api import memcache # Cache!
 from google.appengine.api import taskqueue # Queue Worker to extract the images...
@@ -26,7 +27,8 @@ import base64
 class MainHandler(webapp2.RequestHandler):
     def get(self):
         if self.request.get("url", ''):
-            b64 = base64.b64encode(self.request.get("url", ''));
+            url = urllib.unquote(self.request.get("url", ''))
+            b64 = base64.b64encode(url);
             img = memcache.get(b64)
             if img is not None:
                 self.response.out.write(img)
@@ -34,12 +36,12 @@ class MainHandler(webapp2.RequestHandler):
                 taskqueue.add(url='/worker', params={'url': self.request.get("url", '')})
                 self.response.out.write('http://' + self.request.host  + '/r/' + b64)
         else:
-            self.response.out.write('This is an image extractor application built by <a href="http://superfeedr.com/">Superfeedr</a> for <a href="http://msgboy.com">Msgboy</a>. Check the <a href="">source code</a>, and run your own instance on Google App Engine.')
+            self.response.out.write('This is an image extractor application built by <a href="http://superfeedr.com/">Superfeedr</a> for <a href="http://msgboy.com">Msgboy</a>. Check the <a href="https://github.com/superfeedr/image-extrator">source code</a>, and run your own instance on Google App Engine.')
 
 
 class ExtractWorker(webapp2.RequestHandler):
     def post(self): # should run at most 1/s
-        url = self.request.get('url')
+        url = urllib.unquote(self.request.get("url", ''))
         b64 = base64.b64encode(url);
         h = make_scraper(url)
         img = h.largest_image_url()
@@ -55,7 +57,11 @@ class RedirectHandler(webapp2.RequestHandler):
     def get(self, b64):
         img = memcache.get(b64)
         if img is not None:
+          if img is not "":
             self.redirect(img.encode('ascii','ignore'))
+          else:
+            self.response.headers['Content-Type'] = "image/png"
+            self.response.out.write('')
         else :
             self.response.out.write("Wait a bit plz!")        
 
