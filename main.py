@@ -60,8 +60,7 @@ class RedirectHandler(webapp2.RequestHandler):
           if img is not "":
             self.redirect(img.encode('ascii','ignore'))
           else:
-            self.response.headers['Content-Type'] = "image/png"
-            self.response.out.write('')
+            self.redirect('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg==')
         else :
             self.response.out.write("Wait a bit plz!")        
 
