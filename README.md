@@ -15,4 +15,6 @@ Deploy
 4. Update your application name’s in app.yaml, line 1 (replace `image-extrator`) with whatever you chose at step 2.
 5. Deploy your instance.
 
+You will quickly (100,000 requests/day) bump into Google App Engine's limit for the 1GB incoming bandwidth. Upgrade to a "paid" app... but don't worry too much, as the [incoming bandwidth is free](http://cloud.google.com/pricing/) on Google App Engine! 
+
 Enjoy!
