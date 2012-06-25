@@ -104,7 +104,6 @@ def fetch_url(url, referer = None, retries = 1, dimension = False):
         content = result.content
         content_type = result.headers.get('content-type')
 
-        logging.info(content_type)
         if not content_type:
             return nothing
 
@@ -172,11 +171,9 @@ class Scraper:
         if self.soup:
             og_image = self.soup.find('meta', property='og:image')
             if og_image and og_image['content']:
-                logging.debug("Using og:image")
                 return og_image['content']
             thumbnail_spec = self.soup.find('link', rel = 'image_src')
             if thumbnail_spec and thumbnail_spec['href']:
-                logging.debug("Using image_src")
                 return thumbnail_spec['href']
 
         for image_url in self.image_urls():
