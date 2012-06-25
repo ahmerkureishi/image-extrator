@@ -37,7 +37,7 @@ class MainHandler(webapp2.RequestHandler):
                 taskqueue.add(url='/worker', params={'url': self.request.get("url", '')})
                 self.response.out.write('http://' + self.request.host  + '/r/' + hsh)
         else:
-            self.response.out.write('This is an image extractor application built by <a href="http://superfeedr.com/">Superfeedr</a> for <a href="http://msgboy.com">Msgboy</a>. Check the <a href="https://github.com/superfeedr/image-extrator">source code</a>, and run your own instance on Google App Engine.')
+            self.redirect('http://blog.superfeedr.com/image-extrator/')
 
 
 class ExtractWorker(webapp2.RequestHandler):
