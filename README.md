@@ -1,7 +1,7 @@
 image-extrator
 ==============
 
-This is a simple web application that is able to extract images from urls and caches them. It's using [Reddit's scraper code](https://github.com/reddit/reddit/blob/master/r2/r2/lib/scraper.py), with a couple small tweaks, mostly to allow it to run on [Google App Engine](https://developers.google.com/appengine/).
+This is a simple web application that is able to extract images from urls and caches them. It's using [Reddit's scraper code](https://github.com/reddit/reddit/blob/master/r2/r2/lib/scraper.py), with a couple small tweaks, mostly to allow it to run on [Google App Engine](https://developers.google.com/appengine/). We use it for [Msgboy](http://www.msgboy.com/).
 
 The app provides a single call: <code>/?url=<url></code>, which will return a URL corresponding to the location of that image. Your app should cache that url.
 Please note that the URL returned may also be a redirect url, which should 'soon' redirect to the actual image when it's been extracted.
@@ -17,4 +17,7 @@ Deploy
 
 You will quickly (100,000 requests/day) bump into Google App Engine's limit for the 1GB incoming bandwidth. Upgrade to a "paid" app... but don't worry too much, as the [incoming bandwidth is free](http://cloud.google.com/pricing/) on Google App Engine! 
 
-Enjoy!
+Please check our other community services: [Feediscovery](https://github.com/superfeedr/feediscovery) and [Notifixlight](https://github.com/superfeedr/notifixlight). 
+
+
+
